@@ -1,0 +1,19 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Variables locales futuras
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Dependencias y builds futuros
+node_modules/
+dist/
