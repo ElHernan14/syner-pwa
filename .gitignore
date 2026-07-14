@@ -17,3 +17,7 @@ Thumbs.db
 # Dependencias y builds futuros
 node_modules/
 dist/
+
+# Archivos externos
+../PWA-Concepts.txt
+../SYNER-FIRST-DEPLOY.docx
