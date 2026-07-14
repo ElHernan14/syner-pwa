@@ -1,4 +1,4 @@
-const CACHE_VERSION = "syner-v1";
+const CACHE_VERSION = "syner-v2";
 
 const APP_SHELL = [
   "./",
