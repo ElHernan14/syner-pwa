@@ -22,7 +22,7 @@ function closeModal(): void {
     <header class="border-b border-slate-200 bg-white/90 backdrop-blur">
       <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <RouterLink to="/" class="flex items-center gap-3">
-          <img src="/icons/icon-192.png" alt="" class="size-10 rounded-xl" />
+          <img src="/icons/icon-512.png" alt="" class="size-10 rounded-xl" />
 
           <span class="text-xl font-extrabold tracking-tight text-slate-900"> SYNER </span>
         </RouterLink>

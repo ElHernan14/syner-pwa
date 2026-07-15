@@ -20,10 +20,16 @@ export default defineConfigWithVueTs(
   globalIgnores([
     '**/dist/**',
     '**/dist-ssr/**',
+    '**/dev-dist/**',
     '**/coverage/**',
     '**/legacy/**',
     '**/cypress/screenshots/**',
     '**/cypress/videos/**',
+    '**/cypress/downloads/**',
+
+    // Defensa ante archivos emitidos accidentalmente por vue-tsc
+    '**/*.vue.js',
+    '**/*.vue.js.map',
   ]),
 
   ...pluginVue.configs['flat/essential'],
