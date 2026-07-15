@@ -1,0 +1,41 @@
+import type { SynerPlan } from '../types/plan.types'
+
+export const plansMock: SynerPlan[] = [
+  {
+    id: 'weekly',
+    badge: 'Plan inicial',
+    name: 'Pool semanal',
+    description:
+      'Una propuesta de corto plazo para conocer el funcionamiento de la comunidad y su dinámica.',
+    minimumContribution: '$5.000',
+    estimatedReturn: 'Por definir',
+    duration: '7 días',
+    details:
+      'La información presentada es demostrativa. Las condiciones definitivas serán establecidas una vez aprobado el modelo de negocio.',
+  },
+  {
+    id: 'monthly',
+    badge: 'Más elegido',
+    name: 'Pool mensual',
+    description:
+      'Una experiencia colaborativa de treinta días con seguimiento periódico y una visión más completa del proceso.',
+    minimumContribution: '$20.000',
+    estimatedReturn: 'Por definir',
+    duration: '30 días',
+    details:
+      'Los importes, condiciones y resultados se encuentran pendientes de definición funcional y validación.',
+    featured: true,
+  },
+  {
+    id: 'quarterly',
+    badge: 'Pro',
+    name: 'Pool trimestral',
+    description:
+      'Una propuesta de mayor duración orientada a quienes buscan una experiencia de seguimiento extendido.',
+    minimumContribution: '$100.000',
+    estimatedReturn: 'Por definir',
+    duration: '90 días',
+    details:
+      'Esta tarjeta representa una simulación visual y todavía no constituye una oferta disponible.',
+  },
+]

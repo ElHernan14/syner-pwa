@@ -17,17 +17,27 @@ export default defineConfigWithVueTs(
     files: ['**/*.{vue,ts,mts,tsx}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/dist-ssr/**',
+    '**/dev-dist/**',
+    '**/coverage/**',
+    '**/legacy/**',
+    '**/cypress/screenshots/**',
+    '**/cypress/videos/**',
+    '**/cypress/downloads/**',
+
+    // Defensa ante archivos emitidos accidentalmente por vue-tsc
+    '**/*.vue.js',
+    '**/*.vue.js.map',
+  ]),
 
   ...pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
 
   {
     ...pluginCypress.configs.recommended,
-    files: [
-      'cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}',
-      'cypress/support/**/*.{js,ts,jsx,tsx}',
-    ],
+    files: ['cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}', 'cypress/support/**/*.{js,ts,jsx,tsx}'],
   },
 
   {
