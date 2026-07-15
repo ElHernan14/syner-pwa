@@ -2,9 +2,7 @@ const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_intrinsics;
 let __VLS_directives;
-__VLS_asFunctionalElement1(__VLS_intrinsics.main, __VLS_intrinsics.main)({
-    ...{ class: "min-h-screen" },
-});
+__VLS_asFunctionalElement1(__VLS_intrinsics.main, __VLS_intrinsics.main)(({ class: 'min-h-screen' }));
 /** @type {__VLS_StyleScopedClasses['min-h-screen']} */ ;
 let __VLS_0;
 /** @ts-ignore @type { | typeof __VLS_components.RouterView} */

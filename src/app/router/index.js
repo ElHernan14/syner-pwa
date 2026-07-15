@@ -7,7 +7,8 @@ const routes = [
         children: [
             {
                 path: '',
-                redirect: '/register',
+                name: 'landing',
+                component: () => import('@/modules/landing/pages/LandingPage.vue'),
             },
             {
                 path: 'register',
@@ -38,7 +39,7 @@ const routes = [
     },
     {
         path: '/:pathMatch(.*)*',
-        redirect: '/register',
+        redirect: '/',
     },
 ];
 export const router = createRouter({
