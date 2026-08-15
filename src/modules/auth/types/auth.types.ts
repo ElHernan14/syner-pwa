@@ -1,22 +1,28 @@
-export interface RegisterFormData {
-  fullName: string
-  email: string
-  password: string
-  passwordConfirmation: string
-  acceptsTerms: boolean
+import type { AddressModel } from '../models/address.model'
+import type { UserModel } from '../models/user.model'
+
+export interface RegisterModel {
+  nombre: string
+  correo: string
+  contraseña: string
+  telefono: string
+  dni: string
+
+  direccion: Omit<AddressModel, 'id' | 'usuarioId'>
+
+  aceptaTerminos: boolean
 }
 
 export interface RegisterResult {
-  userId: string
-  fullName: string
-  email: string
-  requiresEmailVerification: boolean
+  usuario: UserModel
+  direccion: AddressModel
 }
 
-export interface AuthUser {
-  id: string
-  fullName: string
-  email: string
-  emailVerified: boolean
-  onboardingCompleted: boolean
+export interface LoginModel {
+  correo: string
+  contraseña: string
+}
+
+export interface LoginResult {
+  usuario: UserModel
 }

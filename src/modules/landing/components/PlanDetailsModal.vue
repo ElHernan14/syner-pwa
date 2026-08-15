@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { onBeforeUnmount, watch } from 'vue'
+import { computed } from 'vue'
+
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 import type { SynerPlan } from '../types/plan.types'
 
@@ -11,98 +21,58 @@ const emit = defineEmits<{
   close: []
 }>()
 
-function close(): void {
-  emit('close')
-}
-
-function handleKeydown(event: KeyboardEvent): void {
-  if (event.key === 'Escape' && props.plan) {
-    close()
-  }
-}
-
-watch(
-  () => props.plan,
-  (plan) => {
-    document.body.style.overflow = plan ? 'hidden' : ''
+const isOpen = computed({
+  get: () => props.plan !== null,
+  set: (value: boolean) => {
+    if (!value) {
+      emit('close')
+    }
   },
-)
-
-window.addEventListener('keydown', handleKeydown)
-
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeydown)
-  document.body.style.overflow = ''
 })
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition duration-200"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-150"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
+  <Dialog v-model:open="isOpen">
+    <DialogContent class="max-w-lg rounded-[var(--syner-radius-lg)] p-6 sm:p-8">
+      <DialogHeader>
+        <p class="text-sm font-bold text-[var(--syner-primary)]">
+          {{ plan?.badge }}
+        </p>
+
+        <DialogTitle class="text-2xl font-bold tracking-tight text-[var(--syner-text)]">
+          {{ plan?.name }}
+        </DialogTitle>
+
+        <DialogDescription class="pt-3 text-base leading-7 text-[var(--syner-text-muted)]">
+          {{ plan?.details }}
+        </DialogDescription>
+      </DialogHeader>
+
+      <!-- Demo notice -->
       <div
-        v-if="plan"
-        class="fixed inset-0 z-40 flex items-end justify-center bg-slate-950/60 p-4 backdrop-blur-sm sm:items-center"
-        role="dialog"
-        aria-modal="true"
-        :aria-labelledby="`plan-title-${plan.id}`"
-        @click.self="close"
+        class="rounded-[var(--syner-radius-md)] border border-[var(--syner-warning)]/20 bg-[var(--syner-warning-soft)] p-4 text-sm leading-6 text-[var(--syner-warning)]"
       >
-        <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <p class="text-sm font-bold text-sky-600">
-                {{ plan.badge }}
-              </p>
-
-              <h2 :id="`plan-title-${plan.id}`" class="mt-1 text-2xl font-bold text-slate-900">
-                {{ plan.name }}
-              </h2>
-            </div>
-
-            <button
-              type="button"
-              class="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xl text-slate-500 transition hover:bg-slate-200"
-              aria-label="Cerrar detalle"
-              @click="close"
-            >
-              ×
-            </button>
-          </div>
-
-          <p class="mt-5 leading-7 text-slate-600">
-            {{ plan.details }}
-          </p>
-
-          <div class="mt-6 rounded-2xl bg-amber-50 p-4 text-sm leading-6 text-amber-800">
-            Esta funcionalidad forma parte de una demostración. No procesa aportes ni operaciones
-            reales.
-          </div>
-
-          <div class="mt-7 grid gap-3 sm:grid-cols-2">
-            <RouterLink
-              to="/register"
-              class="rounded-xl bg-sky-600 px-4 py-3.5 text-center font-bold text-white transition hover:bg-sky-700"
-            >
-              Crear cuenta
-            </RouterLink>
-
-            <button
-              type="button"
-              class="rounded-xl border border-slate-200 px-4 py-3.5 font-bold text-slate-600 transition hover:bg-slate-50"
-              @click="close"
-            >
-              Seguir explorando
-            </button>
-          </div>
-        </div>
+        Esta funcionalidad forma parte de una demostración. No procesa aportes ni operaciones
+        reales.
       </div>
-    </Transition>
-  </Teleport>
+
+      <DialogFooter class="flex-col gap-3 sm:flex-row">
+        <Button
+          as-child
+          class="w-full rounded-[var(--syner-radius-md)] bg-[var(--syner-primary)] py-3.5 font-bold text-white hover:bg-[var(--syner-primary-hover)] sm:flex-1"
+        >
+          <RouterLink to="/register"> Crear cuenta </RouterLink>
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          class="w-full rounded-[var(--syner-radius-md)] py-3.5 font-bold text-[var(--syner-text-muted)] sm:flex-1"
+          @click="emit('close')"
+        >
+          Seguir explorando
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>

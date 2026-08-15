@@ -1,221 +1,436 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { authService } from '../services/mock-auth.service'
-import type { RegisterFormData } from '../types/auth.types'
+import { useRegister } from '../composables/useRegister'
 
 const router = useRouter()
 
-const form = reactive<RegisterFormData>({
-  fullName: '',
-  email: '',
-  password: '',
-  passwordConfirmation: '',
-  acceptsTerms: false,
+const { register, loading, error } = useRegister()
+
+const formulario = reactive({
+  nombre: '',
+  correo: '',
+  contraseña: '',
+  confirmacionContraseña: '',
+  telefono: '',
+  dni: '',
+
+  direccion: {
+    calle: '',
+    numero: '',
+    ciudad: '',
+    provincia: '',
+    codigoPostal: '',
+    referencia: '',
+  },
+
+  aceptaTerminos: false,
 })
 
-const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
-
-function validate(): string | null {
-  if (!form.fullName.trim()) {
+function validar(): string | null {
+  if (!formulario.nombre.trim()) {
     return 'Ingresá tu nombre completo.'
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formulario.correo.trim())) {
     return 'Ingresá un correo electrónico válido.'
   }
 
-  if (form.password.length < 8) {
+  if (formulario.contraseña.length < 8) {
     return 'La contraseña debe contener al menos 8 caracteres.'
   }
 
-  if (!/[A-Z]/.test(form.password)) {
+  if (!/[A-Z]/.test(formulario.contraseña)) {
     return 'La contraseña debe incluir al menos una mayúscula.'
   }
 
-  if (!/[0-9]/.test(form.password)) {
+  if (!/[0-9]/.test(formulario.contraseña)) {
     return 'La contraseña debe incluir al menos un número.'
   }
 
-  if (form.password !== form.passwordConfirmation) {
+  if (formulario.contraseña !== formulario.confirmacionContraseña) {
     return 'Las contraseñas no coinciden.'
   }
 
-  if (!form.acceptsTerms) {
+  if (!formulario.telefono.trim()) {
+    return 'Ingresá tu teléfono.'
+  }
+
+  if (!formulario.dni.trim()) {
+    return 'Ingresá tu DNI.'
+  }
+
+  if (!formulario.direccion.calle.trim()) {
+    return 'Ingresá la calle de tu domicilio.'
+  }
+
+  if (!formulario.direccion.numero.trim()) {
+    return 'Ingresá el número de tu domicilio.'
+  }
+
+  if (!formulario.direccion.ciudad.trim()) {
+    return 'Ingresá tu ciudad.'
+  }
+
+  if (!formulario.direccion.provincia.trim()) {
+    return 'Ingresá tu provincia.'
+  }
+
+  if (!formulario.direccion.codigoPostal.trim()) {
+    return 'Ingresá tu código postal.'
+  }
+
+  if (!formulario.aceptaTerminos) {
     return 'Debés aceptar los términos y la política de privacidad.'
   }
 
   return null
 }
 
-async function handleSubmit(): Promise<void> {
-  errorMessage.value = ''
-  successMessage.value = ''
+async function manejarEnvio(): Promise<void> {
+  error.value = null
 
-  const validationError = validate()
+  const errorValidacion = validar()
 
-  if (validationError) {
-    errorMessage.value = validationError
+  if (errorValidacion) {
+    error.value = errorValidacion
     return
   }
 
-  loading.value = true
-
   try {
-    const result = await authService.register(form)
+    await register({
+      nombre: formulario.nombre,
+      correo: formulario.correo,
+      contraseña: formulario.contraseña,
+      telefono: formulario.telefono,
+      dni: formulario.dni,
+      direccion: {
+        calle: formulario.direccion.calle,
+        numero: formulario.direccion.numero,
+        ciudad: formulario.direccion.ciudad,
+        provincia: formulario.direccion.provincia,
+        codigoPostal: formulario.direccion.codigoPostal,
+        referencia: formulario.direccion.referencia,
+      },
+      aceptaTerminos: formulario.aceptaTerminos,
+    })
 
-    successMessage.value = result.requiresEmailVerification
-      ? 'Cuenta creada. En la versión final enviaremos un correo de verificación.'
-      : 'Cuenta creada correctamente.'
-
-    window.setTimeout(() => {
-      void router.push('/onboarding')
-    }, 1200)
-  } catch (error) {
-    if (error instanceof Error && error.message === 'EMAIL_ALREADY_EXISTS') {
-      errorMessage.value = 'Ese correo ya se encuentra registrado.'
-      return
-    }
-
-    errorMessage.value = 'No pudimos crear la cuenta. Intentá nuevamente.'
-  } finally {
-    loading.value = false
+    await router.push('/onboarding')
+  } catch {
+    // useRegister ya gestiona el error de la operación.
   }
 }
 </script>
 
 <template>
-  <form class="space-y-5" novalidate @submit.prevent="handleSubmit">
+  <form class="space-y-6" novalidate @submit.prevent="manejarEnvio">
+    <!-- Datos personales -->
     <div>
-      <label for="full-name" class="mb-2 block text-sm font-semibold text-slate-700">
-        Nombre completo
-      </label>
+      <h2 class="text-base font-bold text-[var(--syner-text)]">Datos personales</h2>
 
-      <input
-        id="full-name"
-        v-model="form.fullName"
-        type="text"
-        name="fullName"
-        autocomplete="name"
-        placeholder="Ej. Hernán Constante"
-        :disabled="loading"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-      />
-    </div>
-
-    <div>
-      <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">
-        Correo electrónico
-      </label>
-
-      <input
-        id="email"
-        v-model="form.email"
-        type="email"
-        name="email"
-        autocomplete="email"
-        inputmode="email"
-        placeholder="nombre@correo.com"
-        :disabled="loading"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-      />
-    </div>
-
-    <div>
-      <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">
-        Contraseña
-      </label>
-
-      <input
-        id="password"
-        v-model="form.password"
-        type="password"
-        name="password"
-        autocomplete="new-password"
-        placeholder="Mínimo 8 caracteres"
-        :disabled="loading"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-      />
-
-      <p class="mt-2 text-xs leading-5 text-slate-500">
-        Debe incluir al menos una mayúscula y un número.
+      <p class="mt-1 text-sm text-[var(--syner-text-muted)]">
+        Necesitamos algunos datos para crear tu cuenta.
       </p>
     </div>
 
-    <div>
-      <label for="password-confirmation" class="mb-2 block text-sm font-semibold text-slate-700">
-        Confirmar contraseña
-      </label>
+    <div class="space-y-5">
+      <!-- Nombre -->
+      <div>
+        <label for="nombre" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+          Nombre completo
+        </label>
 
-      <input
-        id="password-confirmation"
-        v-model="form.passwordConfirmation"
-        type="password"
-        name="passwordConfirmation"
-        autocomplete="new-password"
-        placeholder="Repetí tu contraseña"
-        :disabled="loading"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-      />
+        <input
+          id="nombre"
+          v-model="formulario.nombre"
+          type="text"
+          name="nombre"
+          autocomplete="name"
+          placeholder="Ej. Hernán Constante"
+          :disabled="loading"
+          class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+        />
+      </div>
+
+      <!-- Correo -->
+      <div>
+        <label for="correo" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+          Correo electrónico
+        </label>
+
+        <input
+          id="correo"
+          v-model="formulario.correo"
+          type="email"
+          name="correo"
+          autocomplete="email"
+          inputmode="email"
+          placeholder="nombre@correo.com"
+          :disabled="loading"
+          class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+        />
+      </div>
+
+      <!-- Teléfono + DNI -->
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="telefono" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+            Teléfono
+          </label>
+
+          <input
+            id="telefono"
+            v-model="formulario.telefono"
+            type="tel"
+            name="telefono"
+            autocomplete="tel"
+            placeholder="+54 9 266..."
+            :disabled="loading"
+            class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+          />
+        </div>
+
+        <div>
+          <label for="dni" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+            DNI
+          </label>
+
+          <input
+            id="dni"
+            v-model="formulario.dni"
+            type="text"
+            name="dni"
+            inputmode="numeric"
+            placeholder="40123456"
+            :disabled="loading"
+            class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+          />
+        </div>
+      </div>
+
+      <!-- Contraseña -->
+      <div>
+        <label for="contraseña" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+          Contraseña
+        </label>
+
+        <input
+          id="contraseña"
+          v-model="formulario.contraseña"
+          type="password"
+          name="contraseña"
+          autocomplete="new-password"
+          placeholder="Mínimo 8 caracteres"
+          :disabled="loading"
+          class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+        />
+
+        <p class="mt-2 text-xs leading-5 text-[var(--syner-text-muted)]">
+          Debe incluir al menos una mayúscula y un número.
+        </p>
+      </div>
+
+      <!-- Confirmación -->
+      <div>
+        <label
+          for="confirmacion-contraseña"
+          class="mb-2 block text-sm font-semibold text-[var(--syner-text)]"
+        >
+          Confirmar contraseña
+        </label>
+
+        <input
+          id="confirmacion-contraseña"
+          v-model="formulario.confirmacionContraseña"
+          type="password"
+          name="confirmacionContraseña"
+          autocomplete="new-password"
+          placeholder="Repetí tu contraseña"
+          :disabled="loading"
+          class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+        />
+      </div>
     </div>
 
+    <!-- Dirección -->
+    <div class="border-t border-[var(--syner-border)] pt-6">
+      <h2 class="text-base font-bold text-[var(--syner-text)]">Dirección de entrega</h2>
+
+      <p class="mt-1 text-sm text-[var(--syner-text-muted)]">
+        Esta dirección quedará asociada a tu cuenta.
+      </p>
+    </div>
+
+    <div class="space-y-5">
+      <!-- Calle + número -->
+      <div class="grid gap-5 sm:grid-cols-[1fr_120px]">
+        <div>
+          <label for="calle" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+            Calle
+          </label>
+
+          <input
+            id="calle"
+            v-model="formulario.direccion.calle"
+            type="text"
+            name="calle"
+            autocomplete="street-address"
+            placeholder="Av. Siempre Viva"
+            :disabled="loading"
+            class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+          />
+        </div>
+
+        <div>
+          <label for="numero" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+            Número
+          </label>
+
+          <input
+            id="numero"
+            v-model="formulario.direccion.numero"
+            type="text"
+            name="numero"
+            inputmode="numeric"
+            placeholder="742"
+            :disabled="loading"
+            class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+          />
+        </div>
+      </div>
+
+      <!-- Ciudad + provincia -->
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="ciudad" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+            Ciudad
+          </label>
+
+          <input
+            id="ciudad"
+            v-model="formulario.direccion.ciudad"
+            type="text"
+            name="ciudad"
+            autocomplete="address-level2"
+            placeholder="La Punta"
+            :disabled="loading"
+            class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+          />
+        </div>
+
+        <div>
+          <label for="provincia" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+            Provincia
+          </label>
+
+          <input
+            id="provincia"
+            v-model="formulario.direccion.provincia"
+            type="text"
+            name="provincia"
+            autocomplete="address-level1"
+            placeholder="San Luis"
+            :disabled="loading"
+            class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+          />
+        </div>
+      </div>
+
+      <!-- Código postal -->
+      <div>
+        <label
+          for="codigo-postal"
+          class="mb-2 block text-sm font-semibold text-[var(--syner-text)]"
+        >
+          Código postal
+        </label>
+
+        <input
+          id="codigo-postal"
+          v-model="formulario.direccion.codigoPostal"
+          type="text"
+          name="codigoPostal"
+          autocomplete="postal-code"
+          inputmode="numeric"
+          placeholder="5710"
+          :disabled="loading"
+          class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+        />
+      </div>
+
+      <!-- Referencia -->
+      <div>
+        <label for="referencia" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
+          Referencia
+          <span class="font-normal text-[var(--syner-text-subtle)]">(opcional)</span>
+        </label>
+
+        <input
+          id="referencia"
+          v-model="formulario.direccion.referencia"
+          type="text"
+          name="referencia"
+          placeholder="Casa esquina"
+          :disabled="loading"
+          class="w-full rounded-(--syner-radius-md) border border-[var(--syner-border)] bg-[var(--syner-surface)] px-4 py-3.5 text-[var(--syner-text)] outline-none transition placeholder:text-[var(--syner-text-subtle)] focus:border-[var(--syner-primary)] focus:ring-4 focus:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-[var(--syner-surface-muted)]"
+        />
+      </div>
+    </div>
+
+    <!-- Términos -->
     <label class="flex items-start gap-3">
       <input
-        v-model="form.acceptsTerms"
+        v-model="formulario.aceptaTerminos"
         type="checkbox"
         :disabled="loading"
-        class="mt-1 size-4 shrink-0 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+        class="mt-1 size-4 shrink-0 rounded border-[var(--syner-border-strong)] text-[var(--syner-primary)] focus:ring-[var(--syner-primary)]"
       />
 
-      <span class="text-sm leading-6 text-slate-600">
+      <span class="text-sm leading-6 text-[var(--syner-text-muted)]">
         Acepto los
         <RouterLink
           to="/terms"
-          class="font-semibold text-sky-600 hover:text-sky-700 hover:underline"
+          class="font-semibold text-[var(--syner-primary)] hover:text-[var(--syner-primary-hover)] hover:underline"
         >
           términos y condiciones
         </RouterLink>
         y la
         <RouterLink
           to="/privacy"
-          class="font-semibold text-sky-600 hover:text-sky-700 hover:underline"
+          class="font-semibold text-[var(--syner-primary)] hover:text-[var(--syner-primary-hover)] hover:underline"
         >
           política de privacidad </RouterLink
         >.
       </span>
     </label>
 
+    <!-- Error -->
     <div
-      v-if="errorMessage"
+      v-if="error"
       role="alert"
-      class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+      class="rounded-(--syner-radius-md) border border-[var(--syner-danger)]/20 bg-[var(--syner-danger-soft)] px-4 py-3 text-sm text-[var(--syner-danger)]"
     >
-      {{ errorMessage }}
+      {{ error }}
     </div>
 
-    <div
-      v-if="successMessage"
-      role="status"
-      class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
-    >
-      {{ successMessage }}
-    </div>
-
+    <!-- Submit -->
     <button
       type="submit"
       :disabled="loading"
-      class="flex w-full items-center justify-center rounded-xl bg-sky-600 px-4 py-3.5 font-bold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-200 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
+      class="flex w-full items-center justify-center rounded-(--syner-radius-md) bg-[var(--syner-primary)] px-4 py-3.5 font-bold text-white shadow-lg shadow-[var(--syner-primary)]/20 transition hover:bg-[var(--syner-primary-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--syner-primary-soft)] disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
     >
       {{ loading ? 'Creando cuenta...' : 'Crear cuenta' }}
     </button>
 
-    <p class="text-center text-sm text-slate-600">
+    <!-- Login -->
+    <p class="text-center text-sm text-[var(--syner-text-muted)]">
       ¿Ya tenés una cuenta?
 
-      <RouterLink to="/login" class="font-bold text-sky-600 hover:text-sky-700 hover:underline">
+      <RouterLink
+        to="/login"
+        class="font-bold text-[var(--syner-primary)] hover:text-[var(--syner-primary-hover)] hover:underline"
+      >
         Iniciá sesión
       </RouterLink>
     </p>

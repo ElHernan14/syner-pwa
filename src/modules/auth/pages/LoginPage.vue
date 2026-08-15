@@ -1,16 +1,54 @@
+<script setup lang="ts">
+import LoginForm from '../components/LoginForm.vue'
+</script>
+
 <template>
-  <section class="flex min-h-screen items-center justify-center px-4">
-    <div class="text-center">
-      <h1 class="text-3xl font-bold text-slate-900">Iniciar sesión</h1>
+  <section
+    class="relative flex min-h-screen items-center justify-center overflow-hidden bg-(--syner-background) px-4 py-10 sm:px-6"
+  >
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(22,143,232,0.10),transparent_42%)]"
+    />
 
-      <p class="mt-3 text-slate-500">Esta pantalla será implementada en el siguiente incremento.</p>
+    <div class="relative w-full max-w-md">
+      <header class="mb-8 text-center">
+        <RouterLink
+          to="/"
+          class="mx-auto mb-6 flex size-14 items-center justify-center overflow-hidden rounded-(--syner-radius-md) bg-(--syner-surface) shadow-(--syner-shadow-sm) ring-1 ring-(--syner-border)"
+          aria-label="Ir al inicio de SYNER"
+        >
+          <img src="/icons/icon-192.png" alt="" class="size-full object-cover" />
+        </RouterLink>
 
-      <RouterLink
-        to="/register"
-        class="mt-6 inline-block font-semibold text-sky-600 hover:underline"
+        <p class="mb-2 text-sm font-semibold tracking-wide text-(--syner-primary)">
+          BIENVENIDO DE NUEVO
+        </p>
+
+        <h1 class="text-3xl font-bold tracking-tight text-(--syner-text) sm:text-4xl">
+          Iniciá sesión
+        </h1>
+
+        <p class="mx-auto mt-3 max-w-sm text-sm leading-6 text-(--syner-text-muted) sm:text-base">
+          Ingresá a tu cuenta para continuar con tu experiencia en SYNER.
+        </p>
+      </header>
+
+      <div
+        class="rounded-(--syner-radius-xl) border border-(--syner-border) bg-(--syner-surface) p-6 shadow-(--syner-shadow-card) sm:p-8"
       >
-        Volver al registro
-      </RouterLink>
+        <LoginForm />
+      </div>
+
+      <p class="mt-6 text-center text-xs leading-5 text-(--syner-text-subtle)">
+        ¿Todavía no formás parte de SYNER?
+        <RouterLink
+          to="/register"
+          class="font-semibold text-(--syner-primary) transition hover:text-(--syner-primary-hover) hover:underline"
+        >
+          Creá tu cuenta
+        </RouterLink>
+      </p>
     </div>
   </section>
 </template>
