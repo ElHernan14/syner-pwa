@@ -23,6 +23,16 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/modules/auth/pages/LoginPage.vue'),
       },
       {
+        path: 'lotes',
+        name: 'lotes',
+        component: () => import('@/modules/lotes/pages/CatalogoPage.vue'),
+      },
+      {
+        path: 'lotes/:id',
+        name: 'lote-detalle',
+        component: () => import('@/modules/lotes/pages/DetalleLotePage.vue'),
+      },
+      {
         path: 'onboarding',
         name: 'onboarding',
         component: () => import('@/modules/onboarding/pages/OnboardingPage.vue'),

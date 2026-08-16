@@ -134,7 +134,7 @@ async function manejarEnvio(): Promise<void> {
       </p>
     </div>
 
-    <div class="space-y-5">
+    <div class="space-y-6">
       <!-- Nombre -->
       <div>
         <label for="nombre" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
@@ -173,7 +173,7 @@ async function manejarEnvio(): Promise<void> {
       </div>
 
       <!-- Teléfono + DNI -->
-      <div class="grid gap-5 sm:grid-cols-2">
+      <div class="grid gap-6 sm:grid-cols-2">
         <div>
           <label for="telefono" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
             Teléfono
@@ -262,9 +262,9 @@ async function manejarEnvio(): Promise<void> {
       </p>
     </div>
 
-    <div class="space-y-5">
+    <div class="space-y-6">
       <!-- Calle + número -->
-      <div class="grid gap-5 sm:grid-cols-[1fr_120px]">
+      <div class="grid gap-6 sm:grid-cols-[minmax(0,1fr)_140px]">
         <div>
           <label for="calle" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
             Calle
@@ -301,7 +301,7 @@ async function manejarEnvio(): Promise<void> {
       </div>
 
       <!-- Ciudad + provincia -->
-      <div class="grid gap-5 sm:grid-cols-2">
+      <div class="grid gap-6 sm:grid-cols-2">
         <div>
           <label for="ciudad" class="mb-2 block text-sm font-semibold text-[var(--syner-text)]">
             Ciudad

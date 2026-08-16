@@ -11,7 +11,7 @@ import LoginForm from '../components/LoginForm.vue'
       class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(22,143,232,0.10),transparent_42%)]"
     />
 
-    <div class="relative w-full max-w-md">
+    <div class="relative w-full max-w-lg">
       <header class="mb-8 text-center">
         <RouterLink
           to="/"
