@@ -2,11 +2,14 @@ import { ref } from 'vue'
 
 import { loteRepository } from '../repositories/mock-lote.repository'
 import type { LoteModel } from '../models/lote.model'
+import { proveedorRepository } from '../repositories/mock-proveedor.repository'
+import type { ProveedorModel } from '../models/proveedor.model'
 
 export interface LoteCatalogo extends LoteModel {
   cuposDisponibles: number
   porcentajeFondeo: number
   diasRestantes: number
+  proveedor: ProveedorModel | null
 }
 
 export function useLotes() {
@@ -41,6 +44,7 @@ export function useLotes() {
       cuposDisponibles,
       porcentajeFondeo,
       diasRestantes: calcularDiasRestantes(lote.fechaFin),
+      proveedor: null,
     }
   }
 
@@ -73,7 +77,12 @@ export function useLotes() {
         return
       }
 
-      lote.value = transformarLote(resultado)
+      const proveedor = await proveedorRepository.obtenerProveedorPorId(resultado.proveedorId)
+
+      lote.value = {
+        ...transformarLote(resultado),
+        proveedor,
+      }
     } catch {
       error.value = 'No pudimos cargar el lote. Intentá nuevamente.'
     } finally {

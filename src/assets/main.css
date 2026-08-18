@@ -12,29 +12,32 @@
      SYNER — Colors
      ========================= */
 
-  --syner-background: #f7f9fc;
-  --syner-surface: #ffffff;
-  --syner-surface-muted: #f1f5f9;
+  --syner-background: #f5f1e8;
+  --syner-surface: #fffcf6;
+  --syner-surface-muted: #ede8dc;
 
-  --syner-border: #dfe5ec;
-  --syner-border-strong: #cbd5e1;
+  --syner-border: #ded8cc;
+  --syner-border-strong: #cac2b4;
 
-  --syner-text: #172033;
-  --syner-text-muted: #64748b;
-  --syner-text-subtle: #94a3b8;
+  --syner-text: #20302d;
+  --syner-text-muted: #66736f;
+  --syner-text-subtle: #98a39f;
 
-  --syner-primary: #168fe8;
-  --syner-primary-hover: #087dd1;
-  --syner-primary-soft: #e9f5ff;
+  --syner-primary: #35a9a2;
+  --syner-primary-hover: #278f89;
+  --syner-primary-soft: #dff3f0;
 
-  --syner-success: #15803d;
-  --syner-success-soft: #ecfdf3;
+  --syner-forest: #6b8f67;
+  --syner-forest-soft: #e8f0e5;
 
-  --syner-danger: #dc2626;
-  --syner-danger-soft: #fef2f2;
+  --syner-success: #4f8a59;
+  --syner-success-soft: #e9f4ea;
 
-  --syner-warning: #b45309;
-  --syner-warning-soft: #fffbeb;
+  --syner-danger: #c85c5c;
+  --syner-danger-soft: #f8e8e8;
+
+  --syner-warning: #a97932;
+  --syner-warning-soft: #f7efdf;
 
   /* =========================
      SYNER — Radius
@@ -49,11 +52,11 @@
      SYNER — Shadows
      ========================= */
 
-  --syner-shadow-sm: 0 1px 3px rgb(15 23 42 / 6%);
+  --syner-shadow-sm: 0 1px 3px rgb(32 48 45 / 7%);
 
-  --syner-shadow-card: 0 20px 50px rgb(15 23 42 / 8%), 0 2px 8px rgb(15 23 42 / 5%);
+  --syner-shadow-card: 0 20px 50px rgb(32 48 45 / 8%), 0 2px 8px rgb(32 48 45 / 5%);
 
-  --syner-shadow-elevated: 0 20px 40px rgb(15 23 42 / 10%), 0 4px 12px rgb(15 23 42 / 6%);
+  --syner-shadow-elevated: 0 20px 40px rgb(32 48 45 / 11%), 0 4px 12px rgb(32 48 45 / 6%);
 
   /* =========================
      shadcn
@@ -61,14 +64,14 @@
 
   --radius: 0.625rem;
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: var(--syner-background);
+  --foreground: var(--syner-text);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card: var(--syner-surface);
+  --card-foreground: var(--syner-text);
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: var(--syner-surface);
+  --popover-foreground: var(--syner-text);
 
   --primary: var(--syner-primary);
   --primary-foreground: #ffffff;
@@ -82,26 +85,20 @@
   --accent: var(--syner-primary-soft);
   --accent-foreground: var(--syner-primary);
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: var(--syner-danger);
 
   --border: var(--syner-border);
   --input: var(--syner-border);
-  --ring: oklch(0.708 0 0);
+  --ring: var(--syner-primary);
 
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: var(--syner-surface);
+  --sidebar-foreground: var(--syner-text);
+  --sidebar-primary: var(--syner-primary);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--syner-surface-muted);
+  --sidebar-accent-foreground: var(--syner-text);
+  --sidebar-border: var(--syner-border);
+  --sidebar-ring: var(--syner-primary);
 }
 
 * {
@@ -195,47 +192,38 @@ a {
 .dark {
   color-scheme: dark;
 
-  /* =========================
-     SYNER — Colors
-     ========================= */
+  --syner-background: #101816;
+  --syner-surface: #17211f;
+  --syner-surface-muted: #202c29;
 
-  --syner-background: #0b1120;
-  --syner-surface: #111827;
-  --syner-surface-muted: #182235;
+  --syner-border: #30403b;
+  --syner-border-strong: #40514b;
 
-  --syner-border: #263244;
-  --syner-border-strong: #334155;
+  --syner-text: #f3f5ef;
+  --syner-text-muted: #aab7b1;
+  --syner-text-subtle: #71807a;
 
-  --syner-text: #f8fafc;
-  --syner-text-muted: #94a3b8;
-  --syner-text-subtle: #64748b;
+  --syner-primary: #68c7bf;
+  --syner-primary-hover: #84d3cc;
+  --syner-primary-soft: #173735;
 
-  --syner-primary: #38a5f0;
-  --syner-primary-hover: #63b8f3;
-  --syner-primary-soft: #0f2d47;
+  --syner-forest: #82a97c;
+  --syner-forest-soft: #243526;
 
-  --syner-success: #4ade80;
-  --syner-success-soft: #0d2a1a;
+  --syner-success: #7fbe86;
+  --syner-success-soft: #1d3221;
 
-  --syner-danger: #f87171;
-  --syner-danger-soft: #35171a;
+  --syner-danger: #e38282;
+  --syner-danger-soft: #392323;
 
-  --syner-warning: #fbbf24;
-  --syner-warning-soft: #35280c;
+  --syner-warning: #ddb568;
+  --syner-warning-soft: #392f1c;
 
-  /* =========================
-     SYNER — Shadows
-     ========================= */
-
-  --syner-shadow-sm: 0 1px 3px rgb(0 0 0 / 20%);
+  --syner-shadow-sm: 0 1px 3px rgb(0 0 0 / 22%);
 
   --syner-shadow-card: 0 20px 50px rgb(0 0 0 / 30%), 0 2px 8px rgb(0 0 0 / 20%);
 
   --syner-shadow-elevated: 0 20px 40px rgb(0 0 0 / 35%), 0 4px 12px rgb(0 0 0 / 25%);
-
-  /* =========================
-     shadcn
-     ========================= */
 
   --background: var(--syner-background);
   --foreground: var(--syner-text);
@@ -247,7 +235,7 @@ a {
   --popover-foreground: var(--syner-text);
 
   --primary: var(--syner-primary);
-  --primary-foreground: #ffffff;
+  --primary-foreground: #10201e;
 
   --secondary: var(--syner-surface-muted);
   --secondary-foreground: var(--syner-text);
@@ -264,16 +252,10 @@ a {
   --input: var(--syner-border);
   --ring: var(--syner-primary);
 
-  --chart-1: oklch(0.7 0.18 220);
-  --chart-2: oklch(0.7 0.15 145);
-  --chart-3: oklch(0.75 0.16 70);
-  --chart-4: oklch(0.7 0.17 300);
-  --chart-5: oklch(0.7 0.18 25);
-
   --sidebar: var(--syner-surface);
   --sidebar-foreground: var(--syner-text);
   --sidebar-primary: var(--syner-primary);
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-primary-foreground: #10201e;
   --sidebar-accent: var(--syner-surface-muted);
   --sidebar-accent-foreground: var(--syner-text);
   --sidebar-border: var(--syner-border);
