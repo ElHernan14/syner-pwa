@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import ThemeToggle from '@/components/theme/ThemeToggle.vue'
+import PublicFooter from './components/PublicFooter.vue'
+import PublicNavbar from './components/PublicNavbar.vue'
 </script>
 
 <template>
-  <main class="min-h-screen">
-    <div class="fixed top-4 right-4 z-50">
-      <ThemeToggle />
-    </div>
+  <div class="flex min-h-screen flex-col">
+    <PublicNavbar />
 
-    <RouterView />
-  </main>
+    <main class="flex-1">
+      <RouterView />
+    </main>
+
+    <PublicFooter />
+  </div>
 </template>

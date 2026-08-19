@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { SlidersHorizontal } from 'lucide-vue-next'
+import { Search, SlidersHorizontal } from 'lucide-vue-next'
 
 import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 import type { CategoriaLote } from '../models/lote.model'
 
@@ -23,245 +24,237 @@ const emit = defineEmits<{
   limpiar: []
 }>()
 
-const categorias: Array<{
-  valor: CategoriaLote | 'todas'
+interface RangoPrecio {
+  desde: number | null
+  hasta: number | null
   etiqueta: string
-}> = [
-  { valor: 'todas', etiqueta: 'Todas' },
-  { valor: 'tecnologia', etiqueta: 'Tecnología' },
-  { valor: 'hogar', etiqueta: 'Hogar' },
-  { valor: 'indumentaria', etiqueta: 'Indumentaria' },
-  { valor: 'movilidad', etiqueta: 'Movilidad' },
-  { valor: 'servicios', etiqueta: 'Servicios' },
-  { valor: 'otros', etiqueta: 'Otros' },
+}
+
+const rangosPrecio: RangoPrecio[] = [
+  {
+    desde: null,
+    hasta: 100000,
+    etiqueta: 'Hasta $100 mil',
+  },
+  {
+    desde: 100000,
+    hasta: 250000,
+    etiqueta: '$100 – $250 mil',
+  },
+  {
+    desde: 250000,
+    hasta: 500000,
+    etiqueta: '$250 – $500 mil',
+  },
+  {
+    desde: 500000,
+    hasta: 750000,
+    etiqueta: '$500 – $750 mil',
+  },
+  {
+    desde: 750000,
+    hasta: 1000000,
+    etiqueta: '$750 mil – $1 M',
+  },
+  {
+    desde: 1000000,
+    hasta: 1500000,
+    etiqueta: '$1 – $1,5 M',
+  },
+  {
+    desde: 1500000,
+    hasta: 2500000,
+    etiqueta: '$1,5 – $2,5 M',
+  },
+  {
+    desde: 2500000,
+    hasta: 4000000,
+    etiqueta: '$2,5 – $4 M',
+  },
+  {
+    desde: 4000000,
+    hasta: null,
+    etiqueta: '$4 M+',
+  },
 ]
 
-const opcionesPrecio = [
-  { valor: 250000, etiqueta: '$250 mil' },
-  { valor: 500000, etiqueta: '$500 mil' },
-  { valor: 750000, etiqueta: '$750 mil' },
-  { valor: 1000000, etiqueta: '$1 millón' },
-  { valor: 1500000, etiqueta: '$1,5 M' },
-  { valor: 2500000, etiqueta: '$2,5 M' },
-  { valor: 4000000, etiqueta: '$4 M' },
-]
-
-function seleccionarCategoria(categoria: CategoriaLote | 'todas'): void {
+function actualizarCampo(campo: keyof FiltrosLote, valor: string): void {
   emit('actualizar', {
     ...props.filtros,
-    categoria,
+    [campo]: campo === 'busqueda' || campo === 'categoria' ? valor : valor ? Number(valor) : null,
+  } as FiltrosLote)
+}
+
+function seleccionarRango(tipo: 'cupo' | 'mercado', rango: RangoPrecio): void {
+  emit('actualizar', {
+    ...props.filtros,
+    ...(tipo === 'cupo'
+      ? {
+          precioCupoDesde: rango.desde,
+          precioCupoHasta: rango.hasta,
+        }
+      : {
+          precioMercadoDesde: rango.desde,
+          precioMercadoHasta: rango.hasta,
+        }),
   })
 }
 
-function actualizarPrecio(
-  campo: 'precioCupoDesde' | 'precioCupoHasta' | 'precioMercadoDesde' | 'precioMercadoHasta',
-  valor: string,
-): void {
+function buscar(): void {
   emit('actualizar', {
     ...props.filtros,
-    [campo]: valor ? Number(valor) : null,
   })
 }
 
 function limpiar(): void {
   emit('limpiar')
 }
+
+function rangoSeleccionado(tipo: 'cupo' | 'mercado'): RangoPrecio | undefined {
+  const desde = tipo === 'cupo' ? props.filtros.precioCupoDesde : props.filtros.precioMercadoDesde
+
+  const hasta = tipo === 'cupo' ? props.filtros.precioCupoHasta : props.filtros.precioMercadoHasta
+
+  return rangosPrecio.find((rango) => rango.desde === desde && rango.hasta === hasta)
+}
 </script>
 
 <template>
-  <Card
-    class="rounded-(--syner-radius-xl) border-(--syner-border) bg-(--syner-surface)/95 shadow-(--syner-shadow-sm) backdrop-blur"
-  >
-    <CardContent class="p-4 sm:p-5">
-      <!-- Heading -->
-      <div class="flex items-start gap-3">
-        <div
-          class="flex size-9 shrink-0 items-center justify-center rounded-(--syner-radius-md) bg-(--syner-primary-soft) text-(--syner-primary)"
-        >
-          <SlidersHorizontal class="size-4" />
-        </div>
-
-        <div>
-          <p class="text-sm font-bold text-(--syner-text)">Explorá los lotes</p>
-
-          <p class="mt-0.5 text-xs text-(--syner-text-muted)">
-            Ajustá la búsqueda a lo que estás buscando.
-          </p>
-        </div>
-      </div>
-
-      <!-- Categories -->
-      <div class="mt-5">
-        <p
-          class="mb-2 text-[11px] font-bold tracking-[0.12em] text-(--syner-text-subtle) uppercase"
-        >
-          Categoría
-        </p>
-
-        <div class="flex gap-1.5 overflow-x-auto pb-1">
-          <button
-            v-for="categoria in categorias"
-            :key="categoria.valor"
-            type="button"
-            class="shrink-0 rounded-full px-3.5 py-2 text-sm font-semibold transition"
-            :class="
-              props.filtros.categoria === categoria.valor
-                ? 'bg-(--syner-primary) text-white shadow-sm'
-                : 'text-(--syner-text-muted) hover:bg-(--syner-primary-soft) hover:text-(--syner-primary)'
-            "
-            @click="seleccionarCategoria(categoria.valor)"
-          >
-            {{ categoria.etiqueta }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Price ranges -->
-      <div class="mt-6 grid gap-4 sm:grid-cols-2">
-        <!-- Cup price -->
-        <div>
-          <div class="mb-2">
-            <p class="text-sm font-semibold text-(--syner-text)">Precio por cupo</p>
-
-            <p class="mt-0.5 text-xs text-(--syner-text-muted)">El valor de tu participación.</p>
-          </div>
-
-          <div
-            class="grid grid-cols-[1fr_auto_1fr] overflow-hidden rounded-(--syner-radius-md) border border-(--syner-border) bg-(--syner-surface)"
-          >
-            <select
-              :value="props.filtros.precioCupoDesde ?? ''"
-              class="min-w-0 bg-transparent px-3 py-3 text-sm font-semibold text-(--syner-text) outline-none transition hover:bg-(--syner-surface-muted) focus:bg-(--syner-primary-soft) focus:text-(--syner-primary)"
-              @change="
-                actualizarPrecio(
-                  'precioCupoDesde',
-                  ($event.target as HTMLSelectElement | null)?.value ?? '',
-                )
-              "
-            >
-              <option value="">Desde</option>
-
-              <option
-                v-for="opcion in opcionesPrecio.filter(
-                  (opcion) =>
-                    props.filtros.precioCupoHasta === null ||
-                    opcion.valor <= props.filtros.precioCupoHasta,
-                )"
-                :key="`cupo-desde-${opcion.valor}`"
-                :value="opcion.valor"
-              >
-                {{ opcion.etiqueta }}
-              </option>
-            </select>
-
+  <Card class="rounded-(--syner-radius-xl) border-0 bg-transparent shadow-none">
+    <CardContent class="px-0 pb-1 pt-1 sm:pt-2">
+      <!-- Search + filters -->
+      <div
+        class="grid gap-5 lg:grid-cols-[minmax(320px,1fr)_minmax(200px,208px)_minmax(200px,208px)] lg:items-end"
+      >
+        <!-- Search -->
+        <div class="min-w-0">
+          <div class="mb-2 flex items-center gap-2">
             <div
-              class="flex items-center border-x border-(--syner-border) px-2 text-xs font-semibold text-(--syner-text-subtle)"
+              class="flex size-8 shrink-0 items-center justify-center rounded-(--syner-radius-md) bg-(--syner-primary-soft) text-(--syner-primary)"
             >
-              —
+              <SlidersHorizontal class="size-4" />
             </div>
 
-            <select
-              :value="props.filtros.precioCupoHasta ?? ''"
-              class="min-w-0 bg-transparent px-3 py-3 text-sm font-semibold text-(--syner-text) outline-none transition hover:bg-(--syner-surface-muted) focus:bg-(--syner-primary-soft) focus:text-(--syner-primary)"
-              @change="
-                actualizarPrecio(
-                  'precioCupoHasta',
-                  ($event.target as HTMLSelectElement | null)?.value ?? '',
-                )
-              "
-            >
-              <option value="">Hasta</option>
+            <div>
+              <p class="text-sm font-bold text-(--syner-text)">Encontrá tu próximo pool</p>
 
-              <option
-                v-for="opcion in opcionesPrecio.filter(
-                  (opcion) =>
-                    props.filtros.precioCupoDesde === null ||
-                    opcion.valor >= props.filtros.precioCupoDesde,
-                )"
-                :key="`cupo-hasta-${opcion.valor}`"
-                :value="opcion.valor"
-              >
-                {{ opcion.etiqueta }}
-              </option>
-            </select>
+              <p class="mt-0.5 text-xs text-(--syner-text-muted)">
+                Explorá según lo que querés conseguir.
+              </p>
+            </div>
           </div>
+
+          <div class="relative flex gap-2">
+            <div class="relative min-w-0 flex-1">
+              <Search
+                class="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-(--syner-text-subtle)"
+              />
+
+              <Input
+                id="busqueda-lotes"
+                :model-value="props.filtros.busqueda"
+                type="search"
+                placeholder="¿Qué te gustaría conseguir?"
+                class="h-11 rounded-(--syner-radius-md) border-(--syner-border) bg-(--syner-surface) pl-10 pr-4 text-sm shadow-none placeholder:text-(--syner-text-subtle) focus-visible:border-(--syner-primary) focus-visible:ring-(--syner-primary-soft)"
+                @update:model-value="actualizarCampo('busqueda', String($event))"
+                @keyup.enter="buscar"
+              />
+            </div>
+
+            <!-- Mobile search -->
+            <button
+              type="button"
+              class="flex h-11 shrink-0 items-center justify-center gap-2 rounded-(--syner-radius-md) bg-(--syner-primary) px-4 text-sm font-bold text-white shadow-sm transition hover:bg-(--syner-primary-hover) lg:hidden"
+              @click="buscar"
+            >
+              <Search class="size-4" />
+              <span class="hidden xs:inline">Buscar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cup price -->
+        <div class="w-full lg:w-52">
+          <p class="mb-2 text-xs font-semibold text-(--syner-text-muted)">Precio por cupo</p>
+
+          <select
+            :value="
+              rangoSeleccionado('cupo')
+                ? `${rangoSeleccionado('cupo')?.desde ?? ''}-${rangoSeleccionado('cupo')?.hasta ?? ''}`
+                : ''
+            "
+            aria-label="Rango de precio por cupo"
+            class="h-11 w-full rounded-(--syner-radius-md) border border-(--syner-border) bg-(--syner-surface) px-3 text-sm font-semibold text-(--syner-text) outline-none transition hover:bg-(--syner-surface) focus:border-(--syner-primary) focus:bg-(--syner-surface) focus:ring-2 focus:ring-(--syner-primary-soft)"
+            @change="
+              (() => {
+                const value = ($event.target as HTMLSelectElement).value
+                const rango = rangosPrecio.find(
+                  (item) => `${item.desde ?? ''}-${item.hasta ?? ''}` === value,
+                )
+
+                if (rango) seleccionarRango('cupo', rango)
+                else seleccionarRango('cupo', { desde: null, hasta: null, etiqueta: '' })
+              })()
+            "
+          >
+            <option value="">Cualquier precio</option>
+
+            <option
+              v-for="rango in rangosPrecio"
+              :key="`cupo-${rango.etiqueta}`"
+              :value="`${rango.desde ?? ''}-${rango.hasta ?? ''}`"
+            >
+              {{ rango.etiqueta }}
+            </option>
+          </select>
         </div>
 
         <!-- Market price -->
-        <div>
-          <div class="mb-2">
-            <p class="text-sm font-semibold text-(--syner-text)">Precio de mercado</p>
+        <div class="w-full lg:w-52">
+          <p class="mb-2 text-xs font-semibold text-(--syner-text-muted)">Precio de mercado</p>
 
-            <p class="mt-0.5 text-xs text-(--syner-text-muted)">
-              Comparalo con el precio habitual.
-            </p>
-          </div>
+          <select
+            :value="
+              rangoSeleccionado('mercado')
+                ? `${rangoSeleccionado('mercado')?.desde ?? ''}-${rangoSeleccionado('mercado')?.hasta ?? ''}`
+                : ''
+            "
+            aria-label="Rango de precio de mercado"
+            class="h-11 w-full rounded-(--syner-radius-md) border border-(--syner-border) bg-(--syner-surface) px-3 text-sm font-semibold text-(--syner-text) outline-none transition hover:bg-(--syner-surface) focus:border-(--syner-primary) focus:bg-(--syner-surface) focus:ring-2 focus:ring-(--syner-primary-soft)"
+            @change="
+              (() => {
+                const value = ($event.target as HTMLSelectElement).value
+                const rango = rangosPrecio.find(
+                  (item) => `${item.desde ?? ''}-${item.hasta ?? ''}` === value,
+                )
 
-          <div
-            class="grid grid-cols-[1fr_auto_1fr] overflow-hidden rounded-(--syner-radius-md) border border-(--syner-border) bg-(--syner-surface)"
+                if (rango) seleccionarRango('mercado', rango)
+                else
+                  seleccionarRango('mercado', {
+                    desde: null,
+                    hasta: null,
+                    etiqueta: '',
+                  })
+              })()
+            "
           >
-            <select
-              :value="props.filtros.precioMercadoDesde ?? ''"
-              class="min-w-0 bg-transparent px-3 py-3 text-sm font-semibold text-(--syner-text) outline-none transition hover:bg-(--syner-surface-muted) focus:bg-(--syner-primary-soft) focus:text-(--syner-primary)"
-              @change="
-                actualizarPrecio(
-                  'precioMercadoDesde',
-                  ($event.target as HTMLSelectElement | null)?.value ?? '',
-                )
-              "
+            <option value="">Cualquier precio</option>
+
+            <option
+              v-for="rango in rangosPrecio"
+              :key="`mercado-${rango.etiqueta}`"
+              :value="`${rango.desde ?? ''}-${rango.hasta ?? ''}`"
             >
-              <option value="">Desde</option>
-
-              <option
-                v-for="opcion in opcionesPrecio.filter(
-                  (opcion) =>
-                    props.filtros.precioMercadoHasta === null ||
-                    opcion.valor <= props.filtros.precioMercadoHasta,
-                )"
-                :key="`mercado-desde-${opcion.valor}`"
-                :value="opcion.valor"
-              >
-                {{ opcion.etiqueta }}
-              </option>
-            </select>
-
-            <div
-              class="flex items-center border-x border-(--syner-border) px-2 text-xs font-semibold text-(--syner-text-subtle)"
-            >
-              —
-            </div>
-
-            <select
-              :value="props.filtros.precioMercadoHasta ?? ''"
-              class="min-w-0 bg-transparent px-3 py-3 text-sm font-semibold text-(--syner-text) outline-none transition hover:bg-(--syner-surface-muted) focus:bg-(--syner-primary-soft) focus:text-(--syner-primary)"
-              @change="
-                actualizarPrecio(
-                  'precioMercadoHasta',
-                  ($event.target as HTMLSelectElement | null)?.value ?? '',
-                )
-              "
-            >
-              <option value="">Hasta</option>
-
-              <option
-                v-for="opcion in opcionesPrecio.filter(
-                  (opcion) =>
-                    props.filtros.precioMercadoDesde === null ||
-                    opcion.valor >= props.filtros.precioMercadoDesde,
-                )"
-                :key="`mercado-hasta-${opcion.valor}`"
-                :value="opcion.valor"
-              >
-                {{ opcion.etiqueta }}
-              </option>
-            </select>
-          </div>
+              {{ rango.etiqueta }}
+            </option>
+          </select>
         </div>
       </div>
 
-      <!-- Clear -->
+      <!-- Reset -->
       <div
         v-if="
+          props.filtros.busqueda.trim() !== '' ||
           props.filtros.categoria !== 'todas' ||
           props.filtros.precioCupoDesde !== null ||
           props.filtros.precioCupoHasta !== null ||
@@ -275,7 +268,7 @@ function limpiar(): void {
           class="text-xs font-semibold text-(--syner-text-muted) transition hover:text-(--syner-primary)"
           @click="limpiar"
         >
-          Restablecer filtros
+          Restablecer búsqueda y filtros
         </button>
       </div>
     </CardContent>

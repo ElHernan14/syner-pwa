@@ -12,8 +12,8 @@
      SYNER — Colors
      ========================= */
 
-  --syner-background: #f5f1e8;
-  --syner-surface: #fffcf6;
+  --syner-background: #f4f8f6;
+  --syner-surface: #fffdfa;
   --syner-surface-muted: #ede8dc;
 
   --syner-border: #ded8cc;
@@ -58,6 +58,11 @@
 
   --syner-shadow-elevated: 0 20px 40px rgb(32 48 45 / 11%), 0 4px 12px rgb(32 48 45 / 6%);
 
+  --syner-shadow-navbar: 0 2px 14px rgb(47 111 94 / 5%), 0 1px 3px rgb(32 48 45 / 3%);
+
+  --syner-how-it-works-bg: #eef5e9;
+  --syner-how-it-works-text: var(--syner-text);
+
   /* =========================
      shadcn
      ========================= */
@@ -99,6 +104,50 @@
   --sidebar-accent-foreground: var(--syner-text);
   --sidebar-border: var(--syner-border);
   --sidebar-ring: var(--syner-primary);
+
+  /* =========================
+     SYNER — Brand / UI
+     ========================= */
+
+  --syner-primary-soft-strong: #dff5ee;
+
+  --syner-surface-elevated: #fffdfa;
+  --syner-surface-soft: #f5f8f6;
+
+  --syner-border-soft: #e7eee9;
+
+  --syner-text-strong: #10251d;
+
+  --syner-brand-forest: #2f6f5e;
+  --syner-brand-mint: #dff5ee;
+  --syner-navbar-surface: #edf7f1;
+  --syner-navbar-surface-strong: #e4f2eb;
+
+  /* =========================
+     SYNER — Interaction
+     ========================= */
+
+  --syner-focus-ring: rgb(47 111 94 / 20%);
+
+  --syner-hover-surface: #e4f2eb;
+  --syner-hover-text: #1d5947;
+
+  /* =========================
+     SYNER — Layout
+     ========================= */
+
+  --syner-content-max-width: 80rem;
+
+  /* =========================
+     SYNER — Motion
+     ========================= */
+
+  --syner-transition-fast: 150ms;
+  --syner-transition-base: 200ms;
+  --syner-transition-slow: 300ms;
+
+  --syner-brand: #258f5a;
+  --syner-brand-hover: #1f7a4c;
 }
 
 * {
@@ -225,6 +274,11 @@ a {
 
   --syner-shadow-elevated: 0 20px 40px rgb(0 0 0 / 35%), 0 4px 12px rgb(0 0 0 / 25%);
 
+  --syner-shadow-navbar: 0 4px 20px rgb(34 197 94 / 7%), 0 1px 4px rgb(0 0 0 / 18%);
+
+  --syner-how-it-works-bg: #26382d;
+  --syner-how-it-works-text: var(--syner-text);
+
   --background: var(--syner-background);
   --foreground: var(--syner-text);
 
@@ -260,19 +314,37 @@ a {
   --sidebar-accent-foreground: var(--syner-text);
   --sidebar-border: var(--syner-border);
   --sidebar-ring: var(--syner-primary);
+
+  --syner-hover-surface: #16352a;
+  --syner-hover-text: #e7f7ee;
+
+  --syner-navbar-surface: #14231f;
+  --syner-navbar-surface-strong: #193029;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+  html {
+    scroll-behavior: smooth;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition:
+      background-color var(--syner-transition-base) ease,
+      border-color var(--syner-transition-base) ease,
+      color var(--syner-transition-base) ease,
+      box-shadow var(--syner-transition-base) ease,
+      transform var(--syner-transition-base) ease;
   }
 }
