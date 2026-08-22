@@ -19,8 +19,17 @@ export interface LoteModel {
   id: string
 
   nombre: string
+
   descripcion: string
+  descripcionCorta: string
+  descripcionLarga: string
+
+  caracteristicas: string[]
+  incluye: string[]
+  consideraciones: string[]
+
   imagen: string
+
   categoria: CategoriaLote
 
   precioMercado: number

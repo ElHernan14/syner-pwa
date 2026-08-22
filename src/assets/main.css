@@ -148,6 +148,16 @@
 
   --syner-brand: #258f5a;
   --syner-brand-hover: #1f7a4c;
+
+  --syner-lote-badge-bg: #eef5e9;
+  --syner-lote-badge-text: #42633d;
+
+  --syner-lote-highlight-bg: #e8f3ec;
+  --syner-lote-highlight-text: #376044;
+
+  --syner-section-green-bg: #edf6f0;
+  --syner-section-green-surface: #e4f2e9;
+  --syner-section-green-text: #2f6f5e;
 }
 
 * {
@@ -320,6 +330,16 @@ a {
 
   --syner-navbar-surface: #14231f;
   --syner-navbar-surface-strong: #193029;
+
+  --syner-lote-badge-bg: #1d3327;
+  --syner-lote-badge-text: #b8d9bd;
+
+  --syner-lote-highlight-bg: #1b3428;
+  --syner-lote-highlight-text: #b8d9bd;
+
+  --syner-section-green-bg: #172b24;
+  --syner-section-green-surface: #1d342b;
+  --syner-section-green-text: #9fd3b7;
 }
 
 @layer base {
