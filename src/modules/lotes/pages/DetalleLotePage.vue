@@ -489,7 +489,7 @@ onMounted(() => {
         <!-- LOT DETAILS -->
         <!-- ========================================================= -->
 
-        <div class="mt-12 grid gap-8 lg:grid-cols-[4fr_3fr] lg:gap-10">
+        <div class="mt-12 grid gap-8 lg:grid-cols-[4fr_4fr] lg:gap-10">
           <!-- Características -->
           <div
             class="rounded-(--syner-radius-xl) bg-(--syner-surface) p-6 shadow-(--syner-shadow-sm) sm:p-7"
