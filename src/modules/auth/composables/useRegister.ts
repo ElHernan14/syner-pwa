@@ -1,9 +1,13 @@
 import { ref } from 'vue'
 
+import { useAuthStore } from '../stores/auth.store'
 import { authRepository } from '../repositories/mock-auth.repository'
+
 import type { RegisterModel, RegisterResult } from '../types/auth.types'
 
 export function useRegister() {
+  const authStore = useAuthStore()
+
   const loading = ref(false)
   const error = ref<string | null>(null)
   const result = ref<RegisterResult | null>(null)
@@ -15,6 +19,8 @@ export function useRegister() {
 
     try {
       result.value = await authRepository.register(input)
+
+      authStore.login(result.value.usuario)
 
       return true
     } catch (cause) {

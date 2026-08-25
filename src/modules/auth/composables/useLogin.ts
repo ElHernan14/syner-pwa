@@ -1,9 +1,13 @@
 import { ref } from 'vue'
 
+import { useAuthStore } from '../stores/auth.store'
 import { authRepository } from '../repositories/mock-auth.repository'
+
 import type { LoginModel, LoginResult } from '../types/auth.types'
 
 export function useLogin() {
+  const authStore = useAuthStore()
+
   const loading = ref(false)
   const error = ref<string | null>(null)
   const result = ref<LoginResult | null>(null)
@@ -15,6 +19,8 @@ export function useLogin() {
 
     try {
       result.value = await authRepository.login(input)
+
+      authStore.login(result.value.usuario)
 
       return true
     } catch (cause) {

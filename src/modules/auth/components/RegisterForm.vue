@@ -98,28 +98,28 @@ async function manejarEnvio(): Promise<void> {
     return
   }
 
-  try {
-    await register({
-      nombre: formulario.nombre,
-      correo: formulario.correo,
-      contraseña: formulario.contraseña,
-      telefono: formulario.telefono,
-      dni: formulario.dni,
-      direccion: {
-        calle: formulario.direccion.calle,
-        numero: formulario.direccion.numero,
-        ciudad: formulario.direccion.ciudad,
-        provincia: formulario.direccion.provincia,
-        codigoPostal: formulario.direccion.codigoPostal,
-        referencia: formulario.direccion.referencia,
-      },
-      aceptaTerminos: formulario.aceptaTerminos,
-    })
+  const registroExitoso = await register({
+    nombre: formulario.nombre,
+    correo: formulario.correo,
+    contraseña: formulario.contraseña,
+    telefono: formulario.telefono,
+    dni: formulario.dni,
+    direccion: {
+      calle: formulario.direccion.calle,
+      numero: formulario.direccion.numero,
+      ciudad: formulario.direccion.ciudad,
+      provincia: formulario.direccion.provincia,
+      codigoPostal: formulario.direccion.codigoPostal,
+      referencia: formulario.direccion.referencia,
+    },
+    aceptaTerminos: formulario.aceptaTerminos,
+  })
 
-    await router.push('/onboarding')
-  } catch {
-    // useRegister ya gestiona el error de la operación.
+  if (!registroExitoso) {
+    return
   }
+
+  await router.push('/onboarding')
 }
 </script>
 
