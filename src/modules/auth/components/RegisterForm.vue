@@ -32,14 +32,14 @@ const formulario = reactive({
 
 const opcionesRol = [
   {
-    valor: 'usuario' as const,
+    valor: 'usuario' as 'usuario' | 'admin',
     titulo: 'Quiero participar',
     descripcion: 'Explorá lotes, reservá cupos y participá de oportunidades de compra colectiva.',
     etiqueta: 'Cuenta personal',
     icono: UserRound,
   },
   {
-    valor: 'admin' as const,
+    valor: 'admin' as 'usuario' | 'admin',
     titulo: 'Quiero administrar',
     descripcion: 'Gestioná lotes, operaciones y el funcionamiento general de la plataforma.',
     etiqueta: 'Cuenta administrativa',
