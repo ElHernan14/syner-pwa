@@ -3,6 +3,7 @@ import type { AddressModel } from '../models/address.model'
 import type { UserModel } from '../models/user.model'
 import type { AuthRepository } from './auth.repository'
 import type { LoginModel, LoginResult, RegisterModel, RegisterResult } from '../types/auth.types'
+import { direccionesMock } from '../data/direcciones.mock'
 
 const MOCK_DELAY_MS = 900
 
@@ -33,9 +34,9 @@ export class MockAuthRepository implements AuthRepository {
       contraseña: input.contraseña,
       telefono: input.telefono.trim(),
       dni: input.dni.trim(),
-      rol: 'usuario',
+      rol: input.rol,
       estado: 'pendiente',
-      avatar: null,
+      avatar: input.avatar,
     }
 
     const direccion: AddressModel = {
@@ -50,6 +51,7 @@ export class MockAuthRepository implements AuthRepository {
     }
 
     usuariosMock.push(usuario)
+    direccionesMock.push(direccion)
 
     return {
       usuario,

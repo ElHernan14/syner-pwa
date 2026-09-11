@@ -1,5 +1,5 @@
 import type { AddressModel } from '../models/address.model'
-import type { UserModel } from '../models/user.model'
+import type { UserModel, UserRole } from '../models/user.model'
 
 export interface RegisterModel {
   nombre: string
@@ -7,9 +7,9 @@ export interface RegisterModel {
   contraseña: string
   telefono: string
   dni: string
-
+  rol: UserRole
+  avatar: string | null
   direccion: Omit<AddressModel, 'id' | 'usuarioId'>
-
   aceptaTerminos: boolean
 }
 
