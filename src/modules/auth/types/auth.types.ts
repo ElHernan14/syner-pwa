@@ -1,5 +1,6 @@
 import type { AddressModel } from '../models/address.model'
-import type { UserModel, UserRole } from '../models/user.model'
+import type { UserModel } from '../models/user.model'
+import type { UserRole } from '../constants/roles'
 
 export interface RegisterModel {
   nombre: string
