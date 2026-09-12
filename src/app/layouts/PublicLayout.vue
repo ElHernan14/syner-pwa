@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { RouterView } from 'vue-router'
+
 import PublicNavbar from './components/PublicNavbar.vue'
 import PublicFooter from './components/PublicFooter.vue'
 </script>

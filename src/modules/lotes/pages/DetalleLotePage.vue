@@ -15,6 +15,8 @@ import {
 
 import { useRoute, useRouter } from 'vue-router'
 
+import { getLotesRouteByArea, type NavigationArea } from '@/app/navigation/navigation'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -23,6 +25,10 @@ import { useLotes } from '../composables/useLotes'
 
 const route = useRoute()
 const router = useRouter()
+
+const navigationArea = computed<NavigationArea>(() => {
+  return (route.meta.area as NavigationArea | undefined) ?? 'public'
+})
 
 const { lote, loading, error, obtenerLotePorId } = useLotes()
 
@@ -118,7 +124,9 @@ const etapas = [
 ]
 
 function volverAlCatalogo(): void {
-  void router.push({ name: 'lotes' })
+  const destino = getLotesRouteByArea(navigationArea.value)
+
+  void router.push(destino)
 }
 
 function reservarCupo(): void {
@@ -154,6 +162,22 @@ function obtenerTextoEstado(estado: string): string {
 
   return estados[estado] ?? estado
 }
+
+const textoVolver = computed(() => {
+  switch (navigationArea.value) {
+    case 'admin':
+      return 'Volver a lotes'
+
+    case 'user':
+      return 'Volver a pools'
+
+    case 'public':
+      return 'Volver a pools'
+
+    default:
+      return 'Volver a pools'
+  }
+})
 
 onMounted(() => {
   void obtenerLotePorId(loteId.value)
@@ -222,7 +246,7 @@ onMounted(() => {
           @click="volverAlCatalogo"
         >
           <ArrowLeft class="size-4 transition-transform duration-200 group-hover:-translate-x-1" />
-          Volver a pools
+          {{ textoVolver }}
         </Button>
       </div>
 

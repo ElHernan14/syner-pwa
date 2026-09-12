@@ -20,11 +20,21 @@ export const adminRoutes: RouteRecordRaw[] = [
         path: 'lotes',
         name: 'admin-lotes',
         component: () => import('@/modules/lotes/pages/CatalogoPage.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['admin'],
+          area: 'admin',
+        },
       },
       {
         path: 'lotes/:id',
         name: 'admin-lote-detalle',
         component: () => import('@/modules/lotes/pages/DetalleLotePage.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['admin'],
+          area: 'admin',
+        },
       },
     ],
   },

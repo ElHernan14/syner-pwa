@@ -1,12 +1,11 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 import PublicLayout from '@/app/layouts/PublicLayout.vue'
-import LandingLayout from '@/app/layouts/LandingLayout.vue'
 
 export const publicRoutes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: LandingLayout,
+    component: PublicLayout,
     children: [
       {
         path: '',
@@ -16,12 +15,6 @@ export const publicRoutes: RouteRecordRaw[] = [
           public: true,
         },
       },
-    ],
-  },
-  {
-    path: '/',
-    component: PublicLayout,
-    children: [
       {
         path: 'lotes',
         name: 'lotes',
@@ -29,6 +22,7 @@ export const publicRoutes: RouteRecordRaw[] = [
         meta: {
           public: true,
           publicOnly: true,
+          area: 'public',
         },
       },
       {
@@ -38,6 +32,7 @@ export const publicRoutes: RouteRecordRaw[] = [
         meta: {
           public: true,
           publicOnly: true,
+          area: 'public',
         },
       },
       {

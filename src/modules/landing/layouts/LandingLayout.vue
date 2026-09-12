@@ -2,7 +2,7 @@
 import { RouterView } from 'vue-router'
 
 import LandingNavbar from '@/modules/landing/components/LandingNavbar.vue'
-import PublicFooter from './components/PublicFooter.vue'
+import PublicFooter from '@/app/layouts/components/PublicFooter.vue'
 </script>
 
 <template>

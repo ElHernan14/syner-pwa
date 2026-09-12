@@ -1,11 +1,16 @@
+```vue
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+
 import { ChevronDown, Menu, X } from 'lucide-vue-next'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 import ThemeToggle from '@/components/theme/ThemeToggle.vue'
+import { useAuthStore } from '@/modules/auth/stores/auth.store'
 
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
 
 const investmentsOpen = ref(false)
 const mobileMenuOpen = ref(false)
@@ -38,9 +43,25 @@ function handleNavigation(): void {
   investmentsOpen.value = false
 }
 
+function goToAuthenticatedArea(): void {
+  handleNavigation()
+
+  if (authStore.isAdmin) {
+    void router.push('/admin')
+    return
+  }
+
+  void router.push('/app')
+}
+
+function logout(): void {
+  handleNavigation()
+  authStore.logout()
+  void router.push('/')
+}
+
 onMounted(() => {
   mediaQuery = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`)
-
   mediaQuery.addEventListener('change', handleViewportChange)
 })
 
@@ -186,19 +207,41 @@ onBeforeUnmount(() => {
         <div class="hidden items-center gap-1.5 lg:flex">
           <ThemeToggle />
 
-          <RouterLink
-            to="/login"
-            class="rounded-lg px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text)"
-          >
-            Ingresar
-          </RouterLink>
+          <!-- Visitor -->
+          <template v-if="!authStore.isAuthenticated">
+            <RouterLink
+              to="/login"
+              class="rounded-lg px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text)"
+            >
+              Ingresar
+            </RouterLink>
 
-          <RouterLink
-            to="/register"
-            class="rounded-lg bg-(--syner-primary) px-3.5 py-2 text-sm font-bold tracking-[-0.01em] text-white shadow-sm transition duration-200 hover:bg-(--syner-primary-hover) hover:shadow-md"
-          >
-            Crear cuenta
-          </RouterLink>
+            <RouterLink
+              to="/register"
+              class="rounded-lg bg-(--syner-primary) px-3.5 py-2 text-sm font-bold tracking-[-0.01em] text-white shadow-sm transition duration-200 hover:bg-(--syner-primary-hover) hover:shadow-md"
+            >
+              Crear cuenta
+            </RouterLink>
+          </template>
+
+          <!-- Authenticated -->
+          <template v-else>
+            <button
+              type="button"
+              class="rounded-lg px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text)"
+              @click="goToAuthenticatedArea"
+            >
+              {{ authStore.isAdmin ? 'Ir a operaciones' : 'Ir a mi espacio' }}
+            </button>
+
+            <button
+              type="button"
+              class="rounded-lg px-3 py-2 text-sm font-semibold tracking-[-0.01em] text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text)"
+              @click="logout"
+            >
+              Cerrar sesión
+            </button>
+          </template>
         </div>
 
         <!-- Mobile actions -->
@@ -310,21 +353,43 @@ onBeforeUnmount(() => {
 
             <!-- Account -->
             <div class="mt-2 space-y-2">
-              <RouterLink
-                to="/login"
-                class="flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-text)"
-                @click="handleNavigation"
-              >
-                Ingresar
-              </RouterLink>
+              <!-- Visitor -->
+              <template v-if="!authStore.isAuthenticated">
+                <RouterLink
+                  to="/login"
+                  class="flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-text)"
+                  @click="handleNavigation"
+                >
+                  Ingresar
+                </RouterLink>
 
-              <RouterLink
-                to="/register"
-                class="flex w-full items-center justify-center rounded-xl bg-(--syner-primary) px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-(--syner-primary-hover)"
-                @click="handleNavigation"
-              >
-                Crear cuenta
-              </RouterLink>
+                <RouterLink
+                  to="/register"
+                  class="flex w-full items-center justify-center rounded-xl bg-(--syner-primary) px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-(--syner-primary-hover)"
+                  @click="handleNavigation"
+                >
+                  Crear cuenta
+                </RouterLink>
+              </template>
+
+              <!-- Authenticated -->
+              <template v-else>
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-center rounded-xl bg-(--syner-primary) px-4 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-(--syner-primary-hover)"
+                  @click="goToAuthenticatedArea"
+                >
+                  {{ authStore.isAdmin ? 'Ir a operaciones' : 'Ir a mi espacio' }}
+                </button>
+
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-text)"
+                  @click="logout"
+                >
+                  Cerrar sesión
+                </button>
+              </template>
             </div>
           </div>
         </div>
@@ -332,3 +397,4 @@ onBeforeUnmount(() => {
     </nav>
   </header>
 </template>
+```

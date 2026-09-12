@@ -20,11 +20,21 @@ export const appRoutes: RouteRecordRaw[] = [
         path: 'lotes',
         name: 'app-lotes',
         component: () => import('@/modules/lotes/pages/CatalogoPage.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['usuario'],
+          area: 'user',
+        },
       },
       {
         path: 'lotes/:id',
         name: 'app-lote-detalle',
         component: () => import('@/modules/lotes/pages/DetalleLotePage.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['usuario'],
+          area: 'user',
+        },
       },
     ],
   },

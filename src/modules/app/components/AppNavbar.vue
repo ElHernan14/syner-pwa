@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
-import { LogOut, Bell } from 'lucide-vue-next'
+
+import { Bell, LogOut, Menu, PackageSearch, X } from 'lucide-vue-next'
 
 import { useAuthStore } from '@/modules/auth/stores/auth.store'
+
+defineProps<{
+  mobileSidebarOpen: boolean
+}>()
+
+const emit = defineEmits<{
+  toggleSidebar: []
+}>()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -11,46 +20,95 @@ async function cerrarSesion(): Promise<void> {
   authStore.logout()
   await router.push('/login')
 }
+
+function toggleSidebar(): void {
+  emit('toggleSidebar')
+}
 </script>
 
 <template>
   <header
-    class="sticky top-0 z-40 border-b border-(--syner-border) bg-(--syner-surface)/95 backdrop-blur"
+    class="sticky top-0 z-40 border-b border-(--syner-border) bg-(--syner-surface)/95 backdrop-blur-xl"
   >
-    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-      <RouterLink to="/app" class="flex items-center gap-3">
-        <img src="/icons/icon-192.png" alt="SYNER" class="size-9 rounded-(--syner-radius-md)" />
+    <div class="flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
+      <!-- Left -->
+      <div class="flex min-w-0 items-center gap-2 sm:gap-3">
+        <!-- Mobile menu -->
+        <button
+          type="button"
+          class="flex size-10 shrink-0 items-center justify-center rounded-xl text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-text) lg:hidden"
+          :aria-expanded="mobileSidebarOpen"
+          aria-controls="app-sidebar"
+          aria-label="Abrir menú de mi espacio"
+          @click="toggleSidebar"
+        >
+          <X v-if="mobileSidebarOpen" class="size-5" />
+          <Menu v-else class="size-5" />
+        </button>
 
-        <div class="leading-tight">
-          <span class="font-bold tracking-tight text-(--syner-text)"> SYNER </span>
+        <RouterLink
+          to="/app"
+          class="flex min-w-0 items-center gap-2.5 rounded-xl px-1 py-1.5 transition-opacity hover:opacity-80 sm:gap-3"
+          aria-label="Ir al inicio de mi espacio en SYNER"
+        >
+          <img
+            src="/icons/icon-192.png"
+            alt="SYNER"
+            class="size-9 shrink-0 rounded-(--syner-radius-md)"
+          />
 
-          <p class="hidden text-xs text-(--syner-text-muted) sm:block">Tu participación</p>
-        </div>
+          <div class="min-w-0 leading-tight">
+            <span class="font-bold tracking-tight text-(--syner-text)"> SYNER </span>
+
+            <p class="hidden truncate text-xs text-(--syner-text-muted) sm:block">
+              Tu participación
+            </p>
+          </div>
+        </RouterLink>
+      </div>
+
+      <!-- Desktop exploration -->
+      <RouterLink
+        to="/app/lotes"
+        class="hidden items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text) sm:flex"
+        active-class="bg-(--syner-primary-soft) text-(--syner-primary)"
+        exact-active-class="bg-(--syner-primary-soft) text-(--syner-primary)"
+      >
+        <PackageSearch class="size-4" />
+        <span>Explorar pools</span>
       </RouterLink>
 
-      <div class="flex items-center gap-2 sm:gap-4">
-        <RouterLink
-          to="/lotes"
-          class="hidden rounded-(--syner-radius-md) px-3 py-2 text-sm font-semibold text-(--syner-text-muted) transition hover:bg-(--syner-background) hover:text-(--syner-primary) sm:block"
-        >
-          Explorar pools
-        </RouterLink>
-
+      <!-- Right -->
+      <div class="flex min-w-0 items-center gap-1.5 sm:gap-3">
         <RouterLink
           to="/app/notificaciones"
-          class="flex size-9 items-center justify-center rounded-(--syner-radius-md) text-(--syner-text-muted) transition hover:bg-(--syner-background) hover:text-(--syner-primary)"
+          class="flex size-10 items-center justify-center rounded-xl text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text)"
+          active-class="bg-(--syner-primary-soft) text-(--syner-primary)"
           aria-label="Notificaciones"
         >
           <Bell class="size-5" />
         </RouterLink>
 
-        <span class="hidden max-w-40 truncate text-sm text-(--syner-text-muted) md:block">
-          {{ authStore.user?.nombre }}
-        </span>
+        <!-- Full identity -->
+        <div class="hidden min-w-0 text-right md:block">
+          <p class="max-w-48 truncate text-sm font-semibold text-(--syner-text)">
+            {{ authStore.user?.nombre }}
+          </p>
+
+          <p class="text-xs text-(--syner-text-muted)">Participante</p>
+        </div>
+
+        <!-- Compact identity -->
+        <div
+          class="flex size-9 shrink-0 items-center justify-center rounded-full bg-(--syner-primary-soft) text-sm font-bold text-(--syner-primary) md:hidden"
+          :title="authStore.user?.nombre"
+        >
+          {{ authStore.user?.nombre?.charAt(0).toUpperCase() }}
+        </div>
 
         <button
           type="button"
-          class="flex items-center gap-2 rounded-(--syner-radius-md) px-2 py-2 text-sm font-semibold text-(--syner-text-muted) transition hover:bg-(--syner-background) hover:text-(--syner-primary)"
+          class="flex items-center gap-2 rounded-xl px-2.5 py-2 text-sm font-semibold text-(--syner-text-muted) transition-colors hover:bg-(--syner-hover-surface) hover:text-(--syner-hover-text)"
           @click="cerrarSesion"
         >
           <LogOut class="size-4" />

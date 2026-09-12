@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+
 import { ArrowRight, Search, Sparkles } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+
+import { getLoteDetailRouteByArea, type NavigationArea } from '@/app/navigation/navigation'
 
 import LoteCard from '../components/LoteCard.vue'
 import LoteFiltros, { type FiltrosLote } from '../components/LoteFiltros.vue'
 import { useLotes, type LoteCatalogo } from '../composables/useLotes'
-
 import type { CategoriaLote } from '../models/lote.model'
 
 const router = useRouter()
+const route = useRoute()
+
+const navigationArea = computed<NavigationArea>(() => {
+  return (route.meta.area as NavigationArea | undefined) ?? 'public'
+})
 
 const { lotes, loading, error, obtenerLotes } = useLotes()
 
@@ -86,12 +93,9 @@ function limpiarFiltros(): void {
 }
 
 function verDetalle(loteId: string): void {
-  void router.push({
-    name: 'lote-detalle',
-    params: {
-      id: loteId,
-    },
-  })
+  const destino = getLoteDetailRouteByArea(navigationArea.value, loteId)
+
+  void router.push(destino)
 }
 
 const categorias: Array<{
