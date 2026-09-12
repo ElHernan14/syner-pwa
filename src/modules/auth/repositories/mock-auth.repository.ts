@@ -1,9 +1,9 @@
-import { usuariosMock } from '../data/usuarios.mock'
 import type { AddressModel } from '../models/address.model'
 import type { UserModel } from '../models/user.model'
 import type { AuthRepository } from './auth.repository'
 import type { LoginModel, LoginResult, RegisterModel, RegisterResult } from '../types/auth.types'
-import { direccionesMock } from '../data/direcciones.mock'
+import { usuariosMock, persistirUsuarios } from '../data/usuarios.mock'
+import { direccionesMock, persistirDirecciones } from '../data/direcciones.mock'
 
 const MOCK_DELAY_MS = 900
 
@@ -52,6 +52,9 @@ export class MockAuthRepository implements AuthRepository {
 
     usuariosMock.push(usuario)
     direccionesMock.push(direccion)
+
+    persistirUsuarios()
+    persistirDirecciones()
 
     return {
       usuario,

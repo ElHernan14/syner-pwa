@@ -1,89 +1,17 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
-import PublicLayout from '../layouts/PublicLayout.vue'
+import { authGuard } from './guards/auth.guard'
+
+import { adminRoutes } from './routes/admin.routes'
+import { appRoutes } from './routes/app.routes'
+import { authRoutes } from './routes/auth.routes'
+import { publicRoutes } from './routes/public.routes'
 
 const routes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    component: PublicLayout,
-
-    children: [
-      {
-        path: '',
-        name: 'landing',
-        component: () => import('@/modules/landing/pages/LandingPage.vue'),
-        meta: {
-          public: true,
-        },
-      },
-
-      {
-        path: 'register',
-        name: 'register',
-        component: () => import('@/modules/auth/pages/RegisterPage.vue'),
-        meta: {
-          public: true,
-          guestOnly: true,
-        },
-      },
-
-      {
-        path: 'login',
-        name: 'login',
-        component: () => import('@/modules/auth/pages/LoginPage.vue'),
-        meta: {
-          public: true,
-          guestOnly: true,
-        },
-      },
-
-      {
-        path: 'lotes',
-        name: 'lotes',
-        component: () => import('@/modules/lotes/pages/CatalogoPage.vue'),
-        meta: {
-          public: true,
-        },
-      },
-
-      {
-        path: 'lotes/:id',
-        name: 'lote-detalle',
-        component: () => import('@/modules/lotes/pages/DetalleLotePage.vue'),
-        meta: {
-          public: true,
-        },
-      },
-
-      {
-        path: 'onboarding',
-        name: 'onboarding',
-        component: () => import('@/modules/onboarding/pages/OnboardingPage.vue'),
-        meta: {
-          requiresAuth: true,
-        },
-      },
-
-      {
-        path: 'terms',
-        name: 'terms',
-        component: () => import('@/modules/legal/pages/TermsPage.vue'),
-        meta: {
-          public: true,
-        },
-      },
-
-      {
-        path: 'privacy',
-        name: 'privacy',
-        component: () => import('@/modules/legal/pages/PrivacyPage.vue'),
-        meta: {
-          public: true,
-        },
-      },
-    ],
-  },
-
+  ...publicRoutes,
+  ...authRoutes,
+  ...appRoutes,
+  ...adminRoutes,
   {
     path: '/:pathMatch(.*)*',
     redirect: '/',
@@ -93,7 +21,6 @@ const routes: RouteRecordRaw[] = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
-
   scrollBehavior() {
     return {
       top: 0,
@@ -101,3 +28,5 @@ export const router = createRouter({
     }
   },
 })
+
+router.beforeEach(authGuard)

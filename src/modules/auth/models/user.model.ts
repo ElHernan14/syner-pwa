@@ -1,4 +1,4 @@
-export type UserRole = 'usuario' | 'admin'
+import type { UserRole } from '../constants/roles'
 
 export type UserStatus = 'pendiente' | 'verificado' | 'bloqueado'
 

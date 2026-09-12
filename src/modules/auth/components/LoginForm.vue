@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 import { useLogin } from '../composables/useLogin'
+import { useAuthStore } from '../stores/auth.store'
+
+import { getAuthenticatedHome } from '../navigation/auth-navigation'
 
 const router = useRouter()
+const route = useRoute()
+const authStore = useAuthStore()
 
 const { login, loading, error } = useLogin()
 
@@ -52,7 +57,20 @@ async function manejarEnvio(): Promise<void> {
     return
   }
 
-  await router.push('/onboarding')
+  const redirect = route.query.redirect
+
+  if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
+    await router.push(redirect)
+    return
+  }
+
+  const role = authStore.role
+
+  if (!role) {
+    return
+  }
+
+  await router.push(getAuthenticatedHome(role))
 }
 </script>
 

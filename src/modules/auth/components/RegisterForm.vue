@@ -3,6 +3,8 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowRight, Check, ImagePlus, ShieldCheck, UserRound } from 'lucide-vue-next'
 import { useRegister } from '../composables/useRegister'
+import { getAuthenticatedHome } from '../navigation/auth-navigation'
+import type { UserRole } from '../constants/roles'
 
 const router = useRouter()
 
@@ -17,7 +19,7 @@ const formulario = reactive({
   confirmacionContraseña: '',
   telefono: '',
   dni: '',
-  rol: 'usuario' as 'usuario' | 'admin',
+  rol: 'usuario' as UserRole,
   avatar: null as string | null,
   direccion: {
     calle: '',
@@ -32,14 +34,14 @@ const formulario = reactive({
 
 const opcionesRol = [
   {
-    valor: 'usuario' as 'usuario' | 'admin',
+    valor: 'usuario' as UserRole,
     titulo: 'Quiero participar',
     descripcion: 'Explorá lotes, reservá cupos y participá de oportunidades de compra colectiva.',
     etiqueta: 'Cuenta personal',
     icono: UserRound,
   },
   {
-    valor: 'admin' as 'usuario' | 'admin',
+    valor: 'admin' as UserRole,
     titulo: 'Quiero administrar',
     descripcion: 'Gestioná lotes, operaciones y el funcionamiento general de la plataforma.',
     etiqueta: 'Cuenta administrativa',
@@ -47,7 +49,7 @@ const opcionesRol = [
   },
 ]
 
-function seleccionarRol(rol: 'usuario' | 'admin'): void {
+function seleccionarRol(rol: UserRole): void {
   formulario.rol = rol
   paso.value = 2
   error.value = null
@@ -199,7 +201,7 @@ async function manejarEnvio(): Promise<void> {
     return
   }
 
-  await router.push('/onboarding')
+  await router.push(getAuthenticatedHome(formulario.rol))
 }
 </script>
 

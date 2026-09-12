@@ -1,6 +1,8 @@
 import type { UserModel } from '../models/user.model'
 
-export const usuariosMock: UserModel[] = [
+const USUARIOS_STORAGE_KEY = 'syner-mock-usuarios'
+
+const usuariosIniciales: UserModel[] = [
   {
     id: 'usuario-001',
     nombre: 'Juan Pérez',
@@ -35,3 +37,24 @@ export const usuariosMock: UserModel[] = [
     avatar: null,
   },
 ]
+
+function cargarUsuarios(): UserModel[] {
+  const almacenados = localStorage.getItem(USUARIOS_STORAGE_KEY)
+
+  if (!almacenados) {
+    return [...usuariosIniciales]
+  }
+
+  try {
+    return JSON.parse(almacenados) as UserModel[]
+  } catch {
+    localStorage.removeItem(USUARIOS_STORAGE_KEY)
+    return [...usuariosIniciales]
+  }
+}
+
+export const usuariosMock: UserModel[] = cargarUsuarios()
+
+export function persistirUsuarios(): void {
+  localStorage.setItem(USUARIOS_STORAGE_KEY, JSON.stringify(usuariosMock))
+}
